@@ -63,7 +63,6 @@ function dump()
 	printError("End of Memory Dump")
 end
 
-
 -- direction = 1 for forward and direction = -1 for back
 local function incPos(direction)
     assert(direction == 1 or direction == -1)
@@ -79,7 +78,6 @@ local function incPos(direction)
         error("",0)
     end
 end
-
 
 function getLimit()
 	return attemptLimit
@@ -313,7 +311,7 @@ end
 
 function down(moveCount)
 	if not moveCount or moveCount == 1 then
-		local good = native.down())
+		local good = native.down()
 		if good then
 			pos = pos + posDOWN
 		end
