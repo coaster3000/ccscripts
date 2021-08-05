@@ -7,15 +7,7 @@ This is the global repository for all programs related to computercraft.
 		<b>APIS</b>
 		<ul>
 			<li>
-				Turtle Complete
-			</li>
-		</ul>
-	</li>
-	<li>
-		<b>Programs</b>
-		<ul>
-			<li>
-				RawGet
+				ET - Extended Turtle
 			</li>
 		</ul>
 	</li>
