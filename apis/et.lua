@@ -34,7 +34,8 @@ if not turtle then
 end
 
 -- Install Step since we do not like the settings api the way it is.
-if not fs.exists('apis/persist') then
+if not fs.exists('apis/persist.lua') then
+    fs.makeDir("apis")
     fs.copy("rom/apis/settings.lua", "apis/persist.lua")
 end
 local persistFile = ".et_persist"
