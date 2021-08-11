@@ -167,6 +167,7 @@ function back(moveCount)
 		if good then
 			incPos(-1)
 		end
+		return good
 	else 
 		local count = 0
 		for i=1,moveCount do
@@ -185,6 +186,7 @@ function forward(moveCount)
 		if good then
 			incPos(1)
 		end
+		return good
 	else
 		local count = 0
 		for i=1,moveCount do
