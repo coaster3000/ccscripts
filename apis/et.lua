@@ -33,6 +33,22 @@ if not turtle then
     error("Cannot load api on a non turtle device...")
 end
 
+-- Install Step since we do not like the settings api the way it is.
+if not fs.exists('apis/persist') then
+    fs.copy("rom/apis/settings.lua", "apis/persist.lua")
+end
+local persistFile = ".et_persist"
+local persist = require("apis/persist")
+
+persist.define("position.x", {description = "The X coordinate for turtle persistance.", default = 0, type = "number"})
+persist.define("position.y", {description = "The Y coordinate for turtle persistance.", default = 0, type = "number"})
+persist.define("position.z", {description = "The Z coordinate for turtle persistance.", default = 0, type = "number"})
+persist.define("position.dir", {description = "The direction facing for turtle persistance.", default = 0, type = "number"})
+persist.define("attempt_limit", {description = "The limit of attempts for certain actions before automatically ending.", default = 500, type = "number"})
+
+persist.load(persistFile)
+--TODO: Implement expect library
+
 local dig_delay = 0.5
 local posdirects = {vector.new(1,0,0), vector.new(0,0,1), vector.new(-1,0,0), vector.new(0,0,-1)}
 local posUP = vector.new(0,1,0)
@@ -77,6 +93,12 @@ local function incPos(direction)
         dump()
         error("",0)
     end
+
+	persist.set("position.x", pos.x)
+	persist.set("position.y", pos.y)
+	persist.set("position.z", pos.z)
+	persist.set("position.dir", dir)
+	persist.save(persistFile)
 end
 
 function getLimit()
@@ -85,6 +107,8 @@ end
 
 function setLimit(num)
 	attemptLimit = num or attemptLimit
+	persist.set("attempt_limit", attemptLimit)
+	persist.save(persistFile)
 end
 
 function getPosition()
@@ -328,7 +352,6 @@ function down(moveCount)
 	end
 end
 
---TODO: Test env modding code
 local env = _ENV
 for k,v in pairs(turtle) do
 	if type(env[k]) == 'nil' then
