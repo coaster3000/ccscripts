@@ -21,7 +21,7 @@
 		* Any of the above conditions can be waived if you get permission from the copyright holder.
 		* Nothing in this license impairs or restricts the author's moral rights.
 	
-		
+	
 	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
 	WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 	COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
@@ -39,15 +39,13 @@ if not fs.exists('apis/persist.lua') then
     fs.copy("rom/apis/settings.lua", "apis/persist.lua")
 end
 local persistFile = ".et_persist"
-local persist = require("apis/persist")
+os.loadAPI("apis/persist")
 
-persist.define("position.x", {description = "The X coordinate for turtle persistance.", default = 0, type = "number"})
-persist.define("position.y", {description = "The Y coordinate for turtle persistance.", default = 0, type = "number"})
-persist.define("position.z", {description = "The Z coordinate for turtle persistance.", default = 0, type = "number"})
-persist.define("position.dir", {description = "The direction facing for turtle persistance.", default = 0, type = "number"})
+persist.define('position', {description = "The vector position of the turtle. [x, y, z]", default = {x = 0, y = 0, z = 0}, type = "table"})
+persist.define('direction', {description = "The direction of the turtle.", default = 0, type = "number"})
+
 persist.define("attempt_limit", {description = "The limit of attempts for certain actions before automatically ending.", default = 500, type = "number"})
 
-persist.load(persistFile)
 --TODO: Implement expect library
 
 local dig_delay = 0.5
@@ -68,9 +66,32 @@ local function cust_fmod(num, div)
 end
 -- Directional vectors for each dir value 0 - 3
 
-local attemptLimit = 500
-local pos = vector.new()
-local dir = 0
+local attemptLimit = persist.get('attempt_limit')
+local pos = vector.new(unpack(persist.get('position')))
+local dir = persist.get('direction')
+
+function saveData() 
+	persist.set('position', pos)
+	persist.set('direction', dir)
+
+	persist.set('attempt_limit', attemptLimit)
+
+	persist.save(persistFile)
+end
+
+function loadData()
+	persist.load(persistFile)
+
+	local v = persist.get("position")
+	local v = {v.x, v.y, v.z}
+
+	pos = vector.new(unpack(v))
+	dir = persist.get('direction')
+	attemptLimit = persist.get('attempt_limit')
+end
+
+loadData()
+
 
 function dump()
 	printError("Memory Dump Of Data...")
@@ -95,10 +116,9 @@ local function incPos(direction)
         error("",0)
     end
 
-	persist.set("position.x", pos.x)
-	persist.set("position.y", pos.y)
-	persist.set("position.z", pos.z)
-	persist.set("position.dir", dir)
+	persist.set('position', pos)
+	persist.set('direction', dir)
+
 	persist.save(persistFile)
 end
 
@@ -122,6 +142,7 @@ end
 
 function setDirection(num)
 	dir = cust_fmod((num or dir), 4)
+	persist.set('direction', dir)
 end
 
 function setPosition(x, y, z)
@@ -203,7 +224,7 @@ function turnRight(turnCount)
 	if not turnCount or turnCount == 1 then
 		local good = native.turnRight()
 		if good then
-			dir = cust_fmod(dir + 1, 4)
+			setDirection(cust_fmod(dir + 1, 4))
 		end
 		return good
 	else
@@ -222,7 +243,7 @@ function turnLeft(turnCount)
 	if not turnCount or turnCount == 1 then
 		local good = native.turnLeft()
 		if good then
-			dir = cust_fmod(dir - 1, 4)
+			setDirection(cust_fmod(dir - 1, 4))
 		end
 		return good
 	else
