@@ -377,6 +377,8 @@ local env = _ENV
 for k,v in pairs(turtle) do
 	if type(env[k]) == 'nil' then
 		env[k] = v
+	elseif k == "select" then -- Forgot select was in the environment already? Where though?
+		env[k] = v
 	end
 end
 
