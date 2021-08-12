@@ -116,10 +116,7 @@ local function incPos(direction)
         error("",0)
     end
 
-	persist.set('position', pos)
-	persist.set('direction', dir)
-
-	persist.save(persistFile)
+	saveData()
 end
 
 function getLimit()
