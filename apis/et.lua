@@ -146,6 +146,8 @@ function setPosition(x, y, z)
 	if type(x) == "table" then
 		assert(type(x.x) == "number" and type(x.y) == "number" and type(x.z) == "number", "Not valid arguments for setPosition. Either X, Y, Z are accepted, or a vector!", 2)
 		setPosition(x.x, x.y, x.z)
+	elseif type(x) == "nil" then
+		setPosition(gps.locate())
 	else
 		pos = vector.new(x, y, z)
 	end
