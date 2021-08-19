@@ -33,20 +33,18 @@ if not turtle then
     error("Cannot load api on a non turtle device...")
 end
 
--- Install Step since we do not like the settings api the way it is.
-if not fs.exists('apis/persist.lua') then
-    fs.makeDir("apis")
-    fs.copy("rom/apis/settings.lua", "apis/persist.lua")
-end
-local persistFile = ".et_persist"
-os.loadAPI("apis/persist")
+-- -- Install Step since we do not like the settings api the way it is.
+-- if not fs.exists('apis/persist.lua') then
+--     fs.makeDir("apis")
+--     fs.copy("rom/apis/settings.lua", "apis/persist.lua")
+-- end
+-- local persistFile = ".et_persist"
+-- os.loadAPI("apis/persist")
 
-persist.define('position', {description = "The vector position of the turtle. [x, y, z]", default = {x = 0, y = 0, z = 0}, type = "table"})
-persist.define('direction', {description = "The direction of the turtle.", default = 0, type = "number"})
+settings.define('et.position', {description = "The vector position of the turtle. [x, y, z]", default = {x = 0, y = 0, z = 0}, type = "table"})
+settings.define('et.direction', {description = "The direction of the turtle.", default = 0, type = "number"})
 
-persist.define("attempt_limit", {description = "The limit of attempts for certain actions before automatically ending.", default = 500, type = "number"})
-
---TODO: Implement expect library
+settings.define("et.attempt_limit", {description = "The limit of attempts for certain actions before automatically ending.", default = 500, type = "number"})
 
 local dig_delay = 0.5
 local posdirects = {vector.new(1,0,0), vector.new(0,0,1), vector.new(-1,0,0), vector.new(0,0,-1)}
@@ -66,28 +64,30 @@ local function cust_fmod(num, div)
 end
 -- Directional vectors for each dir value 0 - 3
 
-local attemptLimit = persist.get('attempt_limit')
-local pos = vector.new(unpack(persist.get('position')))
-local dir = persist.get('direction')
+local attemptLimit = settings.get('et.attempt_limit')
+local pos = vector.new(unpack(settings.get('et.position')))
+local dir = settings.get('et.direction')
 
 function saveData() 
-	persist.set('position', pos)
-	persist.set('direction', dir)
+	settings.set('et.position', pos)
+	settings.set('et.direction', dir)
 
-	persist.set('attempt_limit', attemptLimit)
+	settings.set('et.attempt_limit', attemptLimit)
 
-	persist.save(persistFile)
+	-- settings.save(persistFile)
+	settings.save()
 end
 
 function loadData()
-	persist.load(persistFile)
+	settings.load()
+	-- settings.load(persistFile)
 
-	local v = persist.get("position")
+	local v = settings.get("et.position")
 	local v = {v.x, v.y, v.z}
 
 	pos = vector.new(unpack(v))
-	dir = persist.get('direction')
-	attemptLimit = persist.get('attempt_limit')
+	dir = settings.get('et.direction')
+	attemptLimit = settings.get('et.attempt_limit')
 end
 
 loadData()
@@ -125,8 +125,8 @@ end
 
 function setLimit(num)
 	attemptLimit = num or attemptLimit
-	persist.set("attempt_limit", attemptLimit)
-	persist.save(persistFile)
+	settings.set("attempt_limit", attemptLimit)
+	settings.save(persistFile)
 end
 
 function getPosition()
@@ -139,7 +139,7 @@ end
 
 function setDirection(num)
 	dir = cust_fmod((num or dir), 4)
-	persist.set('direction', dir)
+	settings.set('direction', dir)
 end
 
 function setPosition(x, y, z)
