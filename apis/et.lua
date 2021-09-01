@@ -181,6 +181,78 @@ function isFuel(_slot)
 	return bFuel
 end
 
+function dig(clearBlock)
+	if not clearBlock then
+		return native.dig()
+	else
+		local count = 0
+		while native.dig() do
+			count = count + 1
+			sleep(dig_delay)
+			if count > attemptLimit then
+				return false, count
+			end
+		end
+		if count == 0 then
+			return false, count
+		else
+			return true, count
+		end
+	end
+end
+
+function digDown(clearBlock)
+	if not clearBlock then
+		return native.digDown()
+	else
+		local count = 0
+		while native.digDown() do
+			count = count + 1
+			sleep(dig_delay)
+			if count > attemptLimit then
+				return false, count
+			end
+		end
+		if count == 0 then
+			return false, count
+		else
+			return true, count
+		end
+	end
+end
+
+function digUp(clearBlock)
+	if not clearBlock then
+		return native.digUp()
+	else
+		local count = 0
+		while native.digUp() do
+			count = count + 1
+			sleep(dig_delay)
+			if count > attemptLimit then
+				return false, count
+			end
+		end
+		if count == 0 then
+			return false, count
+		else
+			return true, count
+		end
+	end
+end
+
+function digLeft(clearBlock)
+	turnLeft()
+	dig(clearBlock)
+	turnRight()
+end
+
+function digRight(clearBlock)
+	turnRight()
+	dig(clearBlock)
+	turnLeft()
+end
+
 function back(moveCount)
 	if not moveCount or moveCount == 1 then
 		local good = native.back()
@@ -275,66 +347,6 @@ function strafeRight(moveCount, _refuel)
 	turnRight()
 	forward(moveCount)
 	turnLeft()
-end
-
-function dig(clearBlock)
-	if not clearBlock then
-		return native.dig()
-	else
-		local count = 0
-		while native.dig() do
-			count = count + 1
-			sleep(dig_delay)
-			if count > attemptLimit then
-				return false, count
-			end
-		end
-		if count == 0 then
-			return false, count
-		else
-			return true, count
-		end
-	end
-end
-
-function digDown(clearBlock)
-	if not clearBlock then
-		return native.digDown()
-	else
-		local count = 0
-		while native.digDown() do
-			count = count + 1
-			sleep(dig_delay)
-			if count > attemptLimit then
-				return false, count
-			end
-		end
-		if count == 0 then
-			return false, count
-		else
-			return true, count
-		end
-	end
-end
-
-function digUp(clearBlock)
-	if not clearBlock then
-		return native.digUp()
-	else
-		local count = 0
-		while native.digUp() do
-			count = count + 1
-			sleep(dig_delay)
-			if count > attemptLimit then
-				return false, count
-			end
-		end
-		if count == 0 then
-			return false, count
-		else
-			return true, count
-		end
-	end
 end
 
 function up(moveCount)
