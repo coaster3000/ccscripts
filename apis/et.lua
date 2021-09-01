@@ -52,6 +52,7 @@ local posUP = vector.new(0,1,0)
 local posDOWN = vector.new(0,-1,0)
 
 native = turtle.native or turtle
+native_select = select
 
 function _G.assert(condition, msg, level) level = (level or 1) + 1 if not condition then error(msg, level) end return condition end -- Custom assert function. Based of theOriginalBit's assert function link: http://theoriginalbit.net46.net/index.html
 
