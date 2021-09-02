@@ -125,8 +125,7 @@ end
 
 function setLimit(num)
 	attemptLimit = num or attemptLimit
-	settings.set("attempt_limit", attemptLimit)
-	settings.save(persistFile)
+	saveData()
 end
 
 function getPosition()
