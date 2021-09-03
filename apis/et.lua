@@ -281,6 +281,45 @@ function digRight(clearBlock)
 	turnLeft()
 end
 
+function place(replaceBlock, options)
+	options = options or {}
+	local retslot = getSelectedSlot()
+	local ret1, ret2
+	if (type(options["slot"]) == "number") then
+		select(options["slot"])
+	end
+
+	local hasBlock, blockData = native.inspect()
+	if (hasBlock and replaceBlock) then
+		if (type(options["data"]) == "table") then
+			local data = options["data"]
+			local rName, rTags, rState = data["name"], data["tags"], data["state"]
+			local cName, cTags, cState = blockData["name"], blockData["tags"], blockData["state"]
+
+			local replace = (
+				((type(rName) ~= "nil" and rName ~= cName) or (type(rName) == "nil")) and
+				((type(rTags) == "table" and not softCompare(rTags, cTags)) or (type(rTags) == "nil")) and
+				((type(rState) == "table" and not softCompare(rState, cState)) or type(rState) == "nil")
+			)
+			if (replace) then
+				dig(true)
+				ret1, ret2 = place(false, options)
+			end
+		else
+			if (not compare()) then
+				dig(true)
+				ret1, ret2 = place(false, options)
+			end
+		end
+	else
+		if (type(options["text"]) ~= "nil") then ret1, ret2 = native.place(options["text"])
+		else ret1, ret2 = native.place()
+		end
+	end
+	select(retslot)
+	return ret1, ret2
+end
+
 function back(moveCount)
 	if not moveCount or moveCount == 1 then
 		local good = native.back()
