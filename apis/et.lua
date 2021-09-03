@@ -41,6 +41,7 @@ end
 -- local persistFile = ".et_persist"
 -- os.loadAPI("apis/persist")
 
+settings.define("softcompare.iterationLimit", {description = "The maximum depth of iteration permitted during recursion for soft compares.", default = 10, type = "number"})
 settings.define('et.position', {description = "The vector position of the turtle. [x, y, z]", default = {x = 0, y = 0, z = 0}, type = "table"})
 settings.define('et.direction', {description = "The direction of the turtle.", default = 0, type = "number"})
 
@@ -55,6 +56,33 @@ native = turtle.native or turtle
 native_select = select
 
 function _G.assert(condition, msg, level) level = (level or 1) + 1 if not condition then error(msg, level) end return condition end -- Custom assert function. Based of theOriginalBit's assert function link: http://theoriginalbit.net46.net/index.html
+
+---
+--- Compares values given, doing so recursively if specified to do so.	Values in t1 will be tested to see if they exist in t2 as well as whether the value is equal to one another.Any values not in t1 that are in t2 are ignored in comparison.
+---
+---	@param t1 any
+---	@param t2 any
+---	@param _doRecurse boolean
+---	@param _iteration number
+---
+local function softCompare(t1, t2, _doRecurse, _iteration)
+	_iteration = (_iteration or -1) + 1
+	_doRecurse = 
+	assert(type(t1) ~= "function" or type(t2) ~= "function", "Cannot use functions as arguments. Not Implemented!")
+	assert(type(t1) ~= "thread" or type(t2) ~= "thread", "Cannot use threads as arguments. Not Implemented!")
+	assert(_iteration < settings.get('softcompare.iterationLimit'))
+	if (type(t1) ~= type(t2)) then return false end
+	if (type(t1) ~= "table") then return t1 == t2 end
+	for k,v in pairs(t1) do
+		if (type(t1[k]) ~= type(t2[k])) then return false end
+		if (type(t1) == "table" and _doRecurse) then
+			if (not softCompare(t1[k], t2[k], _doRecurse, _iteration)) then return false end
+		elseif t1[k] ~= t2[k] then
+			return false
+		end
+	end
+	return true
+end 
 
 local function cust_fmod(num, div)
 	local b = math.fmod(num, div)
